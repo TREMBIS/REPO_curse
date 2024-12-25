@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Главная страница</title>
+    <style>
+        body {
+            display: flex;
+            font-family: Arial, sans-serif;
+        }
+        nav {
+            width: 200px;
+            background-color: #f4f4f4;
+            padding: 15px;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+        }
+        nav a {
+            display: block;
+            margin: 10px 0;
+            padding: 10px;
+            text-decoration: none;
+            color: #333;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        nav a:hover {
+            background-color: #ddd;
+        }
+        .content {
+            padding: 20px;
+            flex-grow: 1;
+        }
+        .refresh-button {
+            float: right;
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .refresh-button:hover {
+            background-color: #0056b3;
+        }
+        .student-list {
+            margin-top: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <a href="/std_add.html">Добавить студента</a>
+    <a href="/std_del.html">Удалить студента</a>
+    <a href="/pwd_add.html">Добавить пароль</a>
+    <a href="/pwd_del.html">Удалить пароль</a>
+    <a href="/get_pwd_name.html">Получить данные для входа</a>
+</nav>
+<div class="content">
+    <h1>Добро пожаловать!</h1>
+    <button class="refresh-button" onclick="refreshStudents()">Обновить список студентов</button>
+    
+    <div class="student-list" id="studentList">
+        <h2>Список студентов:</h2>
+        <table id="students">
+            <thead>
+                <tr>
+                    <th>Имя</th>
+                    <th>Группа</th>
+                    <th>Номер</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    function refreshStudents() {
+        fetch('/student/students/', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        }).then(response => { 
+   if (!response.ok) { 
+    return response.json().then(err => { throw new Error(err.detail); }); 
+   } 
+   return response.json(); 
+  }).then(data => {
+                const studentTableBody = document.querySelector('#students tbody');
+                studentTableBody.innerHTML = ''; // Очистка таблицы перед обновлением
+                data.data[0].forEach(student => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = 
+                        '<td>' + student.fullname + '</td>' +
+                        '<td>' + student.group + '</td>' +
+                        '<td>' + student.num + '</td>'
+                    ;
+                    studentTableBody.appendChild(row);
+                });
+            })
+            .catch(error => console.error('Ошибка:', error));
+    }
+	document.addEventListener('DOMContentLoaded', (event) => {
+        refreshStudents();
+    });
+</script>
+
+</body>
+</html>

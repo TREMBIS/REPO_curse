@@ -1,0 +1,17 @@
+{% extends 'core.html' %}
+{% block core_body%}
+<div class="index">
+    <h1>Hello from index page!</h1>
+        {% if posts %}
+        {% for post in posts %}
+        <div class="card">
+            <div>
+                <a href="#">{{post.id}}</a>
+                <b>{{post.title}}</b>
+            </div>
+            <small>{{post.body}}</small>
+        </div>
+        {% endfor %}
+        {% endif %}
+</div>
+{% endblock core_body%}
